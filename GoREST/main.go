@@ -1,13 +1,26 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
+
+// User - The Project's JSON Model
+type User struct {
+	Name             string    `json:"name"`
+	Age              int       `json:"age"`
+	DataJoined       time.Time `json:"date_joined"`
+	AwesomenessLevel int       `json:"awesomeness_level"`
+}
+
+// Users - Slice of the User JSON model
+type Users []User
 
 func main() {
 	// Create new router, and define the trailing slash behavior for
@@ -28,7 +41,11 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 // UserIndexHandler is the handler for the /user route.
 func UserIndexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "The User Index!")
+	users := Users{
+		User{"Tom", 30, time.Now(), 10},
+		User{"Erin", 28, time.Now().Add(10 * time.Second), 10},
+	}
+	json.NewEncoder(w).Encode(users)
 }
 
 // UserShowIndexHandler is the handler for the /user/{userId} route.
